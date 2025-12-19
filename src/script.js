@@ -12,8 +12,8 @@ import {
 } from "./armos/utils/utils";
 
 const gui = new GUI();
-gui.add(armoConfig, "studsWidth", 1, 16, 1);
-gui.add(armoConfig, "studsDepth", 1, 16, 1);
+gui.add(armoConfig, "width", 1, 16, 1);
+gui.add(armoConfig, "depth", 1, 16, 1);
 gui.addColor(armoConfig, "color");
 
 const canvas = document.querySelector("canvas.webgl");
@@ -108,8 +108,8 @@ function updateGhost() {
   if (!lastHit) return;
 
   const hit = lastHit;
-  const offsetX = (armoConfig.studsWidth - 1) / 2;
-  const offsetZ = (armoConfig.studsDepth - 1) / 2;
+  const offsetX = (armoConfig.width - 1) / 2;
+  const offsetZ = (armoConfig.depth - 1) / 2;
 
   if (hit.object.name === "ground") {
     floor.highlight.visible = true;
@@ -118,17 +118,17 @@ function updateGhost() {
     const z = Math.floor(hit.point.z) + 0.5;
 
     floor.highlight.position.set(x + offsetX, 0.02, z + offsetZ);
-    floor.highlight.scale.set(armoConfig.studsWidth, armoConfig.studsDepth, 1);
+    floor.highlight.scale.set(armoConfig.width, armoConfig.depth, 1);
 
     const cells = getOccupiableCells(
       x,
       0,
       z,
-      armoConfig.studsWidth,
-      armoConfig.studsDepth,
+      armoConfig.width,
+      armoConfig.depth,
     );
     const valid = isValidPlacement(cells);
-    floor.highlight.material.color.setHex(valid ? 0x00ff00 : 0xff0000);
+    floor.highlight.material.color.setHex(valid ? armoConfig.color : 0xff0000);
   } else if (hit.face.normal.y > 0.9 && hit.object.userData.armoId) {
     floor.highlight.visible = true;
 
@@ -145,15 +145,14 @@ function updateGhost() {
       worldY,
       z + offsetZ + ghostOffsetZ,
     );
-    floor.highlight.scale.set(armoConfig.studsWidth, armoConfig.studsDepth, 1);
+    floor.highlight.scale.set(armoConfig.width, armoConfig.depth, 1);
 
-    // Validate stack placement
     const cells = getOccupiableCells(
       x + ghostOffsetX,
       newYLevel,
       z + ghostOffsetZ,
-      armoConfig.studsWidth,
-      armoConfig.studsDepth,
+      armoConfig.width,
+      armoConfig.depth,
     );
     const valid = isValidStackPlacement(cells);
     floor.highlight.material.color.setHex(valid ? 0x00ff00 : 0xff0000);
@@ -162,17 +161,15 @@ function updateGhost() {
   }
 }
 
-const addArmo = (e) => {
-  raycaster.setFromCamera(mouse, camera);
-  const hits = raycaster.intersectObjects([
-    floor.plane,
-    ...placedObjects.values(),
-  ]);
-  const offsetX = (armoConfig.studsWidth - 1) / 2;
-  const offsetZ = (armoConfig.studsDepth - 1) / 2;
+const addArmo = () => {
+  if (!lastHit) return;
 
-  if (hits[0].object.name === "ground") {
-    const point = hits[0].point;
+  const hit = lastHit;
+  const offsetX = (armoConfig.width - 1) / 2;
+  const offsetZ = (armoConfig.depth - 1) / 2;
+
+  if (hit.object.name === "ground") {
+    const point = hit.point;
     const x = Math.floor(point.x) + 0.5;
     const z = Math.floor(point.z) + 0.5;
 
@@ -180,19 +177,15 @@ const addArmo = (e) => {
       x,
       0,
       z,
-      armoConfig.studsWidth,
-      armoConfig.studsDepth,
+      armoConfig.width,
+      armoConfig.depth,
     );
 
     if (isValidPlacement(cells)) {
       const armoId = crypto.randomUUID();
 
       const armo = new THREE.Mesh(
-        new THREE.BoxGeometry(
-          armoConfig.studsWidth,
-          0.9,
-          armoConfig.studsDepth,
-        ),
+        new THREE.BoxGeometry(armoConfig.width, 0.9, armoConfig.depth),
         new THREE.MeshStandardMaterial({ color: armoConfig.color }),
       );
       armo.position.set(x + offsetX, 0.455, z + offsetZ);
@@ -204,35 +197,31 @@ const addArmo = (e) => {
       addCellsToOccupied(cells, {
         armoId: armoId,
         color: armoConfig.color,
-        width: armoConfig.studsWidth,
-        depth: armoConfig.studsDepth,
+        width: armoConfig.width,
+        depth: armoConfig.depth,
       });
     }
-  } else if (hits[0].face.normal.y > 0.9 && hits[0].object.userData.armoId) {
-    const point = hits[0].point;
+  } else if (hit.face.normal.y > 0.9 && hit.object.userData.armoId) {
+    const point = hit.point;
     const x = Math.floor(point.x) + 0.5;
     const z = Math.floor(point.z) + 0.5;
 
-    const hitArmoYLevel = hits[0].object.userData?.newYLevel;
+    const hitArmoYLevel = hit.object.userData?.newYLevel;
     const newYLevel = hitArmoYLevel + 1;
 
     const cells = getOccupiableCells(
       x + ghostOffsetX,
       newYLevel,
       z + ghostOffsetZ,
-      armoConfig.studsWidth,
-      armoConfig.studsDepth,
+      armoConfig.width,
+      armoConfig.depth,
     );
     if (isValidStackPlacement(cells)) {
       const armoId = crypto.randomUUID();
-      const worldY = hits[0].object.position.y + 0.9;
+      const worldY = hit.object.position.y + 0.9;
 
       const armo = new THREE.Mesh(
-        new THREE.BoxGeometry(
-          armoConfig.studsWidth,
-          0.9,
-          armoConfig.studsDepth,
-        ),
+        new THREE.BoxGeometry(armoConfig.width, 0.9, armoConfig.depth),
         new THREE.MeshStandardMaterial({ color: armoConfig.color }),
       );
       armo.position.set(
@@ -248,8 +237,8 @@ const addArmo = (e) => {
       addCellsToOccupied(cells, {
         armoId,
         color: armoConfig.color,
-        width: armoConfig.studsWidth,
-        depth: armoConfig.studsDepth,
+        width: armoConfig.width,
+        depth: armoConfig.depth,
       });
     }
   }
