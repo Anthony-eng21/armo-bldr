@@ -5,12 +5,12 @@ export function getOccupiableCells(
   cornerX,
   cornerY,
   cornerZ,
-  studsWidth,
-  studsDepth,
+  brickWidth,
+  brickDepth,
 ) {
   const cells = [];
-  for (let x = 0; x < studsWidth; x++) {
-    for (let z = 0; z < studsDepth; z++) {
+  for (let x = 0; x < brickWidth; x++) {
+    for (let z = 0; z < brickDepth; z++) {
       cells.push({
         x: cornerX + x,
         y: cornerY,
