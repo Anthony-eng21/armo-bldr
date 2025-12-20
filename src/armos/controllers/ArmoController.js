@@ -31,12 +31,12 @@ export class ArmoController {
   }
 
   fineShifter(e) {
-    if (!this.lastHit || this.lastHit.object.name === "ground") return;
+    if (!this.lastHit) return;
 
-    if (e.key === "ArrowLeft") this.ghostOffsetX--;
-    if (e.key === "ArrowRight") this.ghostOffsetX++;
-    if (e.key === "ArrowUp") this.ghostOffsetZ--;
-    if (e.key === "ArrowDown") this.ghostOffsetZ++;
+    if (e.key === "ArrowLeft" || e.key === "a") this.ghostOffsetX--;
+    if (e.key === "ArrowRight" || e.key === "d") this.ghostOffsetX++;
+    if (e.key === "ArrowUp" || e.key === "w") this.ghostOffsetZ--;
+    if (e.key === "ArrowDown" || e.key === "s") this.ghostOffsetZ++;
     if (e.key === "Enter") this.addArmo();
 
     this.updateGhost();
@@ -79,13 +79,17 @@ export class ArmoController {
       const x = Math.floor(hit.point.x) + 0.5;
       const z = Math.floor(hit.point.z) + 0.5;
 
-      this.floor.highlight.position.set(x + offsetX, 0.02, z + offsetZ);
+      this.floor.highlight.position.set(
+        x + offsetX + this.ghostOffsetX,
+        0.02,
+        z + offsetZ + this.ghostOffsetZ,
+      );
       this.floor.highlight.scale.set(armoConfig.width, armoConfig.depth, 1);
 
       const cells = getOccupiableCells(
-        x,
+        x + this.ghostOffsetX,
         0,
-        z,
+        z + this.ghostOffsetZ,
         armoConfig.width,
         armoConfig.depth,
       );
@@ -139,21 +143,26 @@ export class ArmoController {
       const z = Math.floor(point.z) + 0.5;
 
       const cells = getOccupiableCells(
-        x,
+        x + this.ghostOffsetX,
         0,
-        z,
+        z + this.ghostOffsetZ,
         armoConfig.width,
         armoConfig.depth,
       );
 
       if (isValidPlacement(cells)) {
         const armoId = crypto.randomUUID();
-
         const armo = new THREE.Mesh(
           new THREE.BoxGeometry(armoConfig.width, 0.9, armoConfig.depth),
           new THREE.MeshStandardMaterial({ color: armoConfig.color }),
         );
-        armo.position.set(x + offsetX, 0.455, z + offsetZ);
+
+        armo.position.set(
+          x + offsetX + this.ghostOffsetX,
+          0.455,
+          z + offsetZ + this.ghostOffsetZ,
+        );
+
         armo.userData.armoId = armoId;
         armo.userData.newYLevel = 0;
 

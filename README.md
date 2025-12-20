@@ -8,13 +8,17 @@
 
 ## Controls
 
-Use your cursor to place and stack Armo Bricks on eachother or on the ground.
+### Movement
+Mouse
+- Use the cursor to place and click to add or stack Armo Bricks.
+- Use `wasd` or the arrow keys for fine placement of armo bricks.
 
-Change Armo Brick color and dimensions with the control panel in the top left corner
+### Panel
+**Brick Dimensions**
+Change Armo Brick depth/length and width with the control panel in the top right corner.
 
-**Fine Placement**
-Only supported on stacking armos not placing on grid/floor
-- Move Ghost Preview/Highlight with `wasd` or the `Arrow Keys`. 
+**Colors**
+Set Armo Brick color with the control panel's color picker or set a hex color value you like.
 
 
 ## Usage
@@ -22,12 +26,10 @@ Only supported on stacking armos not placing on grid/floor
 Opening forks, issues and, PRs is gladly appreciated!
 
 **Project Setup**
-1. `npm i` or `npm install`
-2. `npm run dev` (vite project)
 3. `git switch -c feature-branch`
 4. `git commit -m "feature-branch" -m "Resolves #issueno"`
-5. `git rebase -i HEAD~n` (if needed)
-6. Push up branch to remote and create PR.
+5. always interactive rebase & rebase also don't forget to squash commits
+6. Push up to remote and create a PR.
 
 - Recommended: Issues and PRs have the same title.
 
