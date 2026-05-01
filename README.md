@@ -1,4 +1,4 @@
-# Armo Builder
+# Brik Builder
 
 **Project Inspiration**:
 
@@ -13,7 +13,7 @@
 
 **Mouse**
 
-- Click to add and stack Armo Bricks
+- Click to add and stack bricks
 
 **Keyboard**
 
@@ -27,8 +27,8 @@
 
 **Brick Dimensions**
 
-- Change Armo Brick depth and width in the control panel (top right corner)
+- Change brick depth and width in the control panel (top right corner)
 
 **Colors**
 
-- Set an Armo's color with the control panel color picker
+- Set a brick's color with the control panel color picker
